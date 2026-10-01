@@ -1,0 +1,36 @@
+name: Update BLS data
+
+on:
+  schedule:
+    - cron: '0 14 * * *'   # daily; BLS data only changes monthly, so this catches release days
+  workflow_dispatch:        # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: any::httr2, any::dplyr, any::lubridate, any::jsonlite
+
+      - name: Fetch BLS data
+        run: Rscript fetch_bls.R
+        env:
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add econ_data.json
+          git diff --cached --quiet || git commit -m "Update BLS data"
+          git push
