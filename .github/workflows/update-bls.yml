@@ -27,6 +27,12 @@ jobs:
         env:
           BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
 
+      - name: Fetch Census data
+        run: Rscript fetch_census.R
+        continue-on-error: true   # a Census problem shouldn't block the BLS update
+        env:
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+
       - name: Commit updated data
         run: |
           git config user.name "github-actions"
