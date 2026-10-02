@@ -6,7 +6,6 @@ library(jsonlite)
 # Free key: https://api.census.gov/data/key_signup.html
 census_key <- Sys.getenv("CENSUS_API_KEY")
 # One row per tab. To add a tracker, add a row: program = EITS abbreviation.
-# CODES MARKED "verify" ARE BEST GUESSES. Check them with explore("program") before trusting them.
 # scale: multiply raw values (e.g. 0.001 turns $ millions into $ billions)
 
 series <- tribble(
